@@ -1,8 +1,8 @@
 import socket
 
 mi_socket = socket.socket()
-mi_socket.bind(('localhost',81))
-mi_socket.listen(25)
+mi_socket.bind(('127.0.0.1',8000))
+mi_socket.listen(5)
 
 while True:
         conexion, addr = mi_socket.accept()
@@ -12,7 +12,7 @@ while True:
         peticion = conexion.recv(1024)
         print(peticion)
 
-        conexion.send("Hola, te saludo desde el servidor")
+        conexion.send("Hola, te saludo desde el servidor".encode())
         conexion.close()
 
 mi_socket.close()
