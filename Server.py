@@ -1,42 +1,55 @@
 import socket
-from _thread import *
+import threading
+import time
+import os
 
-#En los que nos queremos comunicar
-host = '127.0.0.1' 
-port = 1234
-ThreadCount = 0
+IP = socket.gethostbyname(socket.gethostname())
+PORT = 5566
+ADDR = (IP, PORT)
+SIZE = 1024
+FORMAT = "utf-8"
+DISCONNECT_MSG = "!DISCONNECT"
 
-#Manejador de Cliente
-#Devuelve el mismo mensaje al cliente
-def client_handler(connection):
-    connection.send(str.encode('You are now connected to the replay server...'))
-    while True:
-        data = connection.recv(2048) #Para recibir mensajes del cliente
-        message = data.decode('utf-8')
-        if message == 'BYE': #El cliente corta la comunicación
-            break
-        reply = f'Server: {message}'
-        connection.sendall(str.encode(reply))
-    connection.close()
-
-#El servidor acepta conexiones del cliente
-#Abre un nuevo thread para cada cliente
-def accept_connections(ServerSocket):
-    Client, address = ServerSocket.accept()
-    print(f'Connected to: {address[0]}:{str(address[1])}')
-    start_new_thread(client_handler, (Client, )) 
-
-#Inicializar
-def start_server(host, port):
-    #Creación del socket
-    ServerSocket = socket.socket()
-    try:
-        ServerSocket.bind((host, port))
-    except socket.error as e:
-        print(str(e))
-    print(f'Server is listing on the port {port}...')
-    ServerSocket.listen()
+def main():
+    print("[STARTING] Server is starting...")
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind(ADDR)
+    fileType = int(input("Ingrese 1 para enviar el archivo de 100MB o ingrese 2 para enviar el archivo de 250MB: "))
+    concurrentClients = int(input("ingrese el numero de clientes que desea atender en simultaneo: "))
+    barrier = threading.Barrier(concurrentClients)
+    if fileType == 1:
+        file = open("serverFiles/100MB.bin", "r")
+    elif fileType == 2:
+        file = open("serverFiles/250MB.bin", "r")
+    fileName = os.path.basename(file.name)
+    file.seek(0, os.SEEK_END)
+    fileSize = file.tell()
+    data = file.read()
+    server.listen()
+    print(f"[LISTENING] Server is listening on {IP}:{PORT}")
 
     while True:
-        accept_connections(ServerSocket)
-start_server(host, port)
+        conn, addr = server.accept()
+        thread = threading.Thread(target=handle_client, args=(conn, addr, barrier, data, fileName, fileSize))
+        thread.start()
+        print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}")
+
+def handle_client(conn, addr, barrier, data, fileName, fileSize):
+    print(f"[NEW CONNECTION] {addr} connected.")
+
+    barrier.wait()
+    start = time.time()
+    msg = conn.send(data.decode(FORMAT))
+    msgHash = conn.send(hash(data).decode(FORMAT))
+    end = time.time()
+    sendingTime = end - start
+    print(f"[{addr}] {fileName}")
+    print(f"File sended: {fileName} to client {addr} with size of {fileSize} Bytes")
+    
+    msgFinal = conn.recv(SIZE).decode(FORMAT)
+    print (f"{addr}: {msgFinal}")
+
+    conn.close()
+
+if __name__ == "__main__":
+    main()

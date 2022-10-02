@@ -1,4 +1,5 @@
 import socket
+import time
 
 IP = socket.gethostbyname(socket.gethostname())
 PORT = 5566
@@ -11,18 +12,19 @@ def main():
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect(ADDR)
     print(f"[CONNECTED] Client connected to server at {IP}:{PORT}")
-
-    connected = True
-    while connected:
-        msg = input("> ")
-
-        client.send(msg.encode(FORMAT))
-
-        if msg == DISCONNECT_MSG:
-            connected = False
-        else:
-            msg = client.recv(SIZE).decode(FORMAT)
-            print(f"[SERVER] {msg}")
+    
+    start = time.time()
+    msg = client.recv(SIZE).decode(FORMAT)
+    msgHash = client.recv(SIZE).decode(FORMAT)
+    end = time.time()
+    recievingTime = start - end
+    newHash = hash(msg)
+    if newHash == msgHash:
+        client.send("File was recieved correctly".encode(FORMAT))
+        print("Successful download")
+    else:
+        client.send("File hash doesn't match with expected hash".encode(FORMAT))
+        print("File doesn't match with expected hash")
 
 if __name__ == "__main__":
     main()

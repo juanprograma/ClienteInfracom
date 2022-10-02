@@ -1,23 +1,30 @@
 import socket
-#Donde queremos conectarnos
-#Mismos valores del servidor
-host = '127.0.0.1'
-port = 1234
+import time
 
-#Conexión con el socket del servidor
-ClientSocket = socket.socket()
-print('Waiting for connection')
-try:
-    ClientSocket.connect((host, port))
-except socket.error as e:
-    print(str(e))
+IP = socket.gethostbyname(socket.gethostname())
+PORT = 5566
+ADDR = (IP, PORT)
+SIZE = 1024
+FORMAT = "utf-8"
+DISCONNECT_MSG = "!DISCONNECT"
 
-#Comunicación con el servidor
-Response = ClientSocket.recv(2048)
-while True:
-    Input = input('Your message: ')
-    ClientSocket.send(str.encode(Input))
-    Response = ClientSocket.recv(2048)
-    print(Response.decode('utf-8'))
+def main():
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect(ADDR)
+    print(f"[CONNECTED] Client connected to server at {IP}:{PORT}")
+    
+    start = time.time()
+    msg = client.recv(SIZE).decode(FORMAT)
+    msgHash = client.recv(SIZE).decode(FORMAT)
+    end = time.time()
+    recievingTime = start - end
+    newHash = hash(msg)
+    if newHash == msgHash:
+        client.send("File was recieved correctly".encode(FORMAT))
+        print("Successful download")
+    else:
+        client.send("File hash doesn't match with expected hash".encode(FORMAT))
+        print("File doesn't match with expected hash")
 
-ClientSocket.close()
+if __name__ == "__main__":
+    main()
