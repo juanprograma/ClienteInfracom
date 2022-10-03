@@ -1,3 +1,4 @@
+import hashlib
 import socket
 import time
 
@@ -6,7 +7,6 @@ PORT = 5566
 ADDR = (IP, PORT)
 SIZE = 1024
 FORMAT = "utf-8"
-DISCONNECT_MSG = "!DISCONNECT"
 
 def main():
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -15,10 +15,14 @@ def main():
     
     start = time.time()
     msg = client.recv(SIZE).decode(FORMAT)
+    newHash = hashlib.sha256(msg.encode(FORMAT)).hexdigest()
+    print(msg)
+    print(newHash)
     msgHash = client.recv(SIZE).decode(FORMAT)
+    print (msgHash)
     end = time.time()
     recievingTime = start - end
-    newHash = hash(msg)
+    print(recievingTime)
     if newHash == msgHash:
         client.send("File was recieved correctly".encode(FORMAT))
         print("Successful download")
