@@ -15,15 +15,14 @@ def main():
     
     start = time.time()
     msg = client.recv(SIZE).decode(FORMAT)
-    newHash = hashlib.sha256(msg.encode(FORMAT)).hexdigest()
-    print(msg)
-    print(newHash)
-    msgHash = client.recv(SIZE).decode(FORMAT)
-    print (msgHash)
+    lmsg = eval(msg)
+    print(lmsg)
+    newHash = hashlib.sha256(lmsg[0].encode()).hexdigest()
+    print (newHash)
     end = time.time()
-    recievingTime = start - end
+    recievingTime = end - start
     print(recievingTime)
-    if newHash == msgHash:
+    if newHash == lmsg[1]:
         client.send("File was recieved correctly".encode(FORMAT))
         print("Successful download")
     else:

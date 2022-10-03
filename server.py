@@ -19,9 +19,9 @@ def main():
     concurrentClients = int(input("ingrese el numero de clientes que desea atender en simultaneo: "))
     barrier = threading.Barrier(concurrentClients)
     if fileType == 1:
-        file = open("serverFiles/100MB.bin", "rb")
+        file = open("serverFiles/100MB.bin", "r")
     elif fileType == 2:
-        file = open("serverFiles/250MB.bin", "rb")
+        file = open("serverFiles/250MB.bin", "r")
     fileName = os.path.basename(file.name)
     file.seek(0, os.SEEK_END)
     fileSize = file.tell()
@@ -42,12 +42,13 @@ def handle_client(conn, addr, barrier, data, fileName, fileSize):
     now = datetime.datetime.now()
     print (now.strftime("%m/%d/%Y, %H:%M:%S"))
     start = time.time()
-    msg = conn.send(data)
-    msgHash = conn.send((hashlib.sha256(data).hexdigest()).encode(FORMAT))
-    print (msgHash)
+    dataHash = hashlib.sha256(data.encode(FORMAT)).hexdigest()
+    print(dataHash)
+    conn.send(str([data, dataHash]).encode(FORMAT))
+    print ([data, dataHash])
     end = time.time()
     sendingTime = end - start
-    print (sendingTime)
+    print (str(sendingTime))
     print(f"[{addr}] {fileName}")
     print(f"File sended: {fileName} to client {addr} with size of {fileSize} Bytes")
      
