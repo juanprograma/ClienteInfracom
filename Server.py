@@ -4,13 +4,12 @@ import socket
 import threading
 import time
 import os
-
 import tqdm
 
 IP = socket.gethostbyname(socket.gethostname())
 PORT = 5566
 ADDR = (IP, PORT)
-SIZE = 2048
+SIZE = 1024
 FORMAT = "utf-8"
 SEPARATOR = "<SEPARATOR>"
 
@@ -31,8 +30,7 @@ def main():
         temporalHash.update(chunk)
         dataHash += temporalHash.hexdigest()
     fileName = os.path.basename(file.name)
-    file.seek(0, os.SEEK_END)
-    fileSize = file.tell()
+    fileSize = os.path.getsize("serverFiles/" + fileName)
     file.close()
     print(f"The file {fileName} with {fileSize} Bytes was loaded and its hash was calculated")
     clientCount = 1
@@ -61,6 +59,7 @@ def handle_client(conn, addr, barrier, dataHash, fileName, fileSize, clientNumbe
                 break
             conn.sendall(bytes_read)
             progress.update(len(bytes_read))
+    
     print(f"[{addr}] {fileName}")
     print(f"File sended: {fileName} to client {addr} with size of {fileSize} Bytes")
     msgFinal = conn.recv(SIZE).decode(FORMAT)

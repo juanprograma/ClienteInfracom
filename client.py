@@ -1,5 +1,4 @@
 import hashlib
-import os
 import socket
 import time
 import tqdm
@@ -7,7 +6,7 @@ import tqdm
 IP = socket.gethostbyname(socket.gethostname())
 PORT = 5566
 ADDR = (IP, PORT)
-SIZE = 2048
+SIZE = 1024
 FORMAT = "utf-8"
 SEPARATOR = "<SEPARATOR>"
 
@@ -25,13 +24,18 @@ def main():
     filename = clientNumber + "-" + filename
     filesize = int(filesize)
     progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
-    file = open(filename, "wb")
-    while True:
-        bytes_read = client.recv(SIZE)
-        if not bytes_read:    
-            break
-        file.write(bytes_read)
-        progress.update(len(bytes_read))
+    with open(filename, "wb") as file:
+        while True:
+            client.settimeout(0.5)
+            try:
+                bytes_read = client.recv(SIZE)
+            except:
+                break
+            if not bytes_read:    
+                break
+            file.write(bytes_read)
+            progress.update(len(bytes_read))
+    file = open(filename, "rb")
     for chunk in iter(lambda: file.read(SIZE), b''):
         temporalHash.update(chunk)
         newHash += temporalHash.hexdigest()
