@@ -26,9 +26,8 @@ def main():
         file = open("serverFiles/100MB.bin", "rb")
     elif fileType == 2:
         file = open("serverFiles/250MB.bin", "rb")
-    for chunk in iter(lambda: file.read(SIZE), b''):
-        temporalHash.update(chunk)
-        dataHash += temporalHash.hexdigest()
+    readBytes = file.read()
+    dataHash = hashlib.sha256(readBytes).hexdigest()
     fileName = os.path.basename(file.name)
     fileSize = os.path.getsize("serverFiles/" + fileName)
     file.close()

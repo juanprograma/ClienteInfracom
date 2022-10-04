@@ -36,9 +36,8 @@ def main():
             file.write(bytes_read)
             progress.update(len(bytes_read))
     file = open(filename, "rb")
-    for chunk in iter(lambda: file.read(SIZE), b''):
-        temporalHash.update(chunk)
-        newHash += temporalHash.hexdigest()
+    readBytes = file.read()
+    newHash = hashlib.sha256(readBytes).hexdigest()
     if newHash == dataHash:
         client.send("File was received correctly".encode(FORMAT))
         print("Successful download")
