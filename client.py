@@ -5,8 +5,8 @@ import tqdm
 import datetime
 import os
 
-#IP = '192.168.137.130'
-IP = '192.168.1.117'
+IP = '192.168.137.130'
+#IP = '192.168.1.117'
 PORT = 5566
 ADDR = (IP, PORT)
 SIZE = 1024
