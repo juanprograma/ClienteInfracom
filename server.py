@@ -85,17 +85,17 @@ def handle_client(conn, addr, barrier, dataHash, fileName, fileSize, clientNumbe
     if concurrentClients == str(1):
         if str(fileSize) == str(104857600):
             numPrueba = 1
-        elif str(fileSize) ==str(250000000):
+        elif str(fileSize) ==str(262144000):
             numPrueba = 2
     elif concurrentClients == str(5):
         if str(fileSize) == str(104857600):
             numPrueba = 3
-        elif str(fileSize) == str(250000000):
+        elif str(fileSize) == str(262144000):
             numPrueba = 4
     elif concurrentClients == str(10):
         if str(fileSize) == str(104857600):
             numPrueba = 5
-        elif str(fileSize) == str(250000000):
+        elif str(fileSize) == str(262144000):
             numPrueba = 6
 
     filename = 'Cliente'+ str(clientNumber) + "-Prueba" + str(numPrueba) + '-' + str(concurrentClients)

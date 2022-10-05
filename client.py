@@ -34,17 +34,17 @@ def main():
     if concurrentClients == str(1):
         if filesize == str(104857600):
             numPrueba = 1
-        elif filesize ==str(250000000):
+        elif filesize ==str(262144000):
             numPrueba = 2
     elif concurrentClients == str(5):
         if filesize == str(104857600):
             numPrueba = 3
-        elif filesize == str(250000000):
+        elif filesize == str(262144000):
             numPrueba = 4
     elif concurrentClients == str(10):
         if filesize == str(104857600):
             numPrueba = 5
-        elif filesize == str(250000000):
+        elif filesize == str(262144000):
             numPrueba = 6
     filename = 'Cliente'+ clientNumber + "-Prueba" + str(numPrueba) + '-' + concurrentClients
     filesize = int(filesize)
