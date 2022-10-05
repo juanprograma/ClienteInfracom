@@ -5,7 +5,8 @@ import tqdm
 import datetime
 import os
 
-IP = '192.168.137.130'
+#IP = '192.168.137.130'
+IP = '192.168.1.117'
 PORT = 5566
 ADDR = (IP, PORT)
 SIZE = 1024
@@ -50,7 +51,7 @@ def main():
     progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
     with open(filename, "wb") as file:
         while True:
-            client.settimeout(5)
+            client.settimeout(0.5)
             try:
                 bytes_read = client.recv(SIZE)
             except:
