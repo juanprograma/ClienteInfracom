@@ -1,4 +1,6 @@
+from calendar import month
 import datetime
+from fileinput import filename
 import hashlib
 import socket
 import threading
@@ -38,18 +40,18 @@ def main():
 
     while True:
         conn, addr = server.accept()
-        thread = threading.Thread(target=handle_client, args=(conn, addr, barrier, dataHash, fileName, fileSize, clientCount))
+        thread = threading.Thread(target=handle_client, args=(conn, addr, barrier, dataHash, fileName, fileSize, clientCount,concurrentClients))
         clientCount+= 1
         thread.start()
         print(f"[ACTIVE CONNECTIONS] {threading.active_count() - 1}")
 
-def handle_client(conn, addr, barrier, dataHash, fileName, fileSize, clientNumber):
+def handle_client(conn, addr, barrier, dataHash, fileName, fileSize, clientNumber,concurrentClients):
     print(f"[NEW CONNECTION] {addr} connected.")
     barrier.wait()
     now = datetime.datetime.now()
     print (now.strftime("%m/%d/%Y, %H:%M:%S"))
     start = time.time()
-    conn.send(f"{fileName}{SEPARATOR}{fileSize}{SEPARATOR}{clientNumber}{SEPARATOR}{dataHash}".encode())
+    conn.send(f"{fileName}{SEPARATOR}{fileSize}{SEPARATOR}{clientNumber}{SEPARATOR}{concurrentClients}{SEPARATOR}{dataHash}".encode())
     progress = tqdm.tqdm(range(fileSize), f"Sending {fileName}", unit="B", unit_scale=True, unit_divisor=1024)
     with open("serverFiles/" + fileName, "rb") as file:
         while True:
@@ -66,6 +68,8 @@ def handle_client(conn, addr, barrier, dataHash, fileName, fileSize, clientNumbe
     end = time.time()
     sendingTime = end - start
     print(str(sendingTime))
+    
+    
 
     conn.close()
 

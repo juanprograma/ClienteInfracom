@@ -1,0 +1,5 @@
+El archivo enviado fue: Cliente1-Prueba3-5
+El archivo tiene un tamaño de: 104857600 bytes
+El cliente al que le fue enviado es: 1
+El tiempo de transferencia para este cliente fue: 13.320611238479614 segundos
+La entrega fue exitosa
