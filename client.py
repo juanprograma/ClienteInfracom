@@ -81,7 +81,7 @@ def main():
     second = str(now)[17:19]
     
     save_path = 'Logs/'
-    file_name = year + '-' + month + '-' + day + '-' + hour + '-' + minute + '-' + second + '-log.txt' 
+    file_name = 'C'+year + '-' + month + '-' + day + '-' + hour + '-' + minute + '-' + second + '-log.txt' 
     completeName = os.path.join(save_path,file_name)
     newFile = open(completeName, 'w')
     newFile.write('El archivo enviado fue: ' + filename +'\n')
