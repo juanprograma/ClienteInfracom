@@ -5,7 +5,7 @@ import tqdm
 import datetime
 import os
 
-IP = socket.gethostbyname(socket.gethostname())
+IP = '192.168.137.130'
 PORT = 5566
 ADDR = (IP, PORT)
 SIZE = 1024
@@ -16,6 +16,7 @@ def main():
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     temporalHash = hashlib.sha256()
     newHash = ""
+    #print(ADDR)
     client.connect(ADDR)
     print(f"[CONNECTED] Client connected to server at {IP}:{PORT}")
     

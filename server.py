@@ -8,7 +8,7 @@ import time
 import os
 import tqdm
 
-IP = socket.gethostbyname(socket.gethostname())
+IP = '192.168.137.130'
 PORT = 5566
 ADDR = (IP, PORT)
 SIZE = 1024
