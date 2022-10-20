@@ -8,7 +8,8 @@ import time
 import os
 import tqdm
 
-IP = socket.gethostbyname(socket.gethostname())
+IP = '192.168.137.130'
+#IP = '192.168.1.117'
 PORT = 5566
 ADDR = (IP, PORT)
 SIZE = 1024
@@ -49,6 +50,7 @@ def handle_client(conn, addr, barrier, dataHash, fileName, fileSize, clientNumbe
     print(f"[NEW CONNECTION] {addr} connected.")
     barrier.wait()
     now = datetime.datetime.now()
+    successful = False
     print (now.strftime("%m/%d/%Y, %H:%M:%S"))
     start = time.time()
     conn.send(f"{fileName}{SEPARATOR}{fileSize}{SEPARATOR}{clientNumber}{SEPARATOR}{concurrentClients}{SEPARATOR}{dataHash}".encode())
@@ -65,10 +67,50 @@ def handle_client(conn, addr, barrier, dataHash, fileName, fileSize, clientNumbe
     print(f"File sended: {fileName} to client {addr} with size of {fileSize} Bytes")
     msgFinal = conn.recv(SIZE).decode(FORMAT)
     print (f"[{addr}]: {msgFinal}")
+    if msgFinal == 'File was received correctly':
+        successful = True
     end = time.time()
     sendingTime = end - start
     print(str(sendingTime))
     
+    year = str(now)[:4]
+    month = str(now)[5:7]
+    day = str(now)[8:10]
+    hour = str(now)[11:13]
+    minute = str(now)[14:16]
+    second = str(now)[17:19]
+    concurrentClients = str(concurrentClients)
+    
+    numPrueba = 0
+    if concurrentClients == str(1):
+        if str(fileSize) == str(104857600):
+            numPrueba = 1
+        elif str(fileSize) ==str(262144000):
+            numPrueba = 2
+    elif concurrentClients == str(5):
+        if str(fileSize) == str(104857600):
+            numPrueba = 3
+        elif str(fileSize) == str(262144000):
+            numPrueba = 4
+    elif concurrentClients == str(10):
+        if str(fileSize) == str(104857600):
+            numPrueba = 5
+        elif str(fileSize) == str(262144000):
+            numPrueba = 6
+
+    filename = 'Cliente'+ str(clientNumber) + "-Prueba" + str(numPrueba) + '-' + str(concurrentClients)
+    save_path = 'Logs/'
+    file_name = 'S'+ str(clientNumber)+ year + '-' + month + '-' + day + '-' + hour + '-' + minute + '-' + second + '-log.txt' 
+    completeName = os.path.join(save_path,file_name)
+    newFile = open(completeName, 'w')
+    newFile.write('El archivo enviado fue: ' + filename +'\n')
+    newFile.write('El archivo tiene un tamaño de: ' + str(fileSize) + ' bytes\n')
+    newFile.write('El cliente al que le fue enviado es: ' + str(clientNumber) +'\n')
+    newFile.write('El tiempo de transferencia para este cliente fue: ' + str(sendingTime)+' segundos\n')
+    if successful == True:
+        newFile.write('La entrega fue exitosa\n')
+    elif successful == False:
+        newFile.write('La entrega no fue exitosa\n')
     
 
     conn.close()
