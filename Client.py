@@ -5,7 +5,8 @@ import tqdm
 import datetime
 import os
 
-IP = '192.168.137.130'
+HOSTNAME = socket.gethostname()   
+IP = socket.gethostbyname(HOSTNAME)
 #IP = '192.168.1.117'
 PORT = 5566
 ADDR = (IP, PORT)
